@@ -1,2 +1,91 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+
+public class AcademicWellbeingTracker extends JFrame {
+
+    private JTextField sleepField, studyField, moodField;
+    private JTextArea outputArea;
+    private ArrayList<String> logs = new ArrayList<>();
+
+    public AcademicWellbeingTracker() {
+        setTitle("Academic Wellbeing Tracker");
+        setSize(400, 400);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        // Input panel
+        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        inputPanel.setBorder(BorderFactory.createTitledBorder("Enter Daily Stats"));
+
+        inputPanel.add(new JLabel("Hours of Sleep:"));
+        sleepField = new JTextField();
+        inputPanel.add(sleepField);
+
+        inputPanel.add(new JLabel("Hours of Study:"));
+        studyField = new JTextField();
+        inputPanel.add(studyField);
+
+        inputPanel.add(new JLabel("Mood (1-10):"));
+        moodField = new JTextField();
+        inputPanel.add(moodField);
+
+        JButton logButton = new JButton("Log Entry");
+        inputPanel.add(logButton);
+
+        JButton clearButton = new JButton("Clear");
+        inputPanel.add(clearButton);
+
+        add(inputPanel, BorderLayout.NORTH);
+
+        // Output area
+        outputArea = new JTextArea();
+        outputArea.setEditable(false);
+        outputArea.setBorder(BorderFactory.createTitledBorder("Wellbeing Log"));
+        add(new JScrollPane(outputArea), BorderLayout.CENTER);
+
+        // Button actions
+        logButton.addActionListener(e -> logEntry());
+        clearButton.addActionListener(e -> clearFields());
+    }
+
+    private void logEntry() {
+        String sleep = sleepField.getText();
+        String study = studyField.getText();
+        String mood = moodField.getText();
+
+        if (sleep.isEmpty() || study.isEmpty() || mood.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields.");
+            return;
+        }
+
+        String entry = "Sleep: " + sleep + " hrs | Study: " + study + " hrs | Mood: " + mood + "/10";
+        logs.add(entry);
+        updateOutput();
+        clearFields();
+    }
+
+    private void clearFields() {
+        sleepField.setText("");
+        studyField.setText("");
+        moodField.setText("");
+    }
+
+    private void updateOutput() {
+        StringBuilder logText = new StringBuilder();
+        for (String log : logs) {
+            logText.append(log).append("\n");
+        }
+        outputArea.setText(logText.toString());
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            AcademicWellbeingTracker tracker = new AcademicWellbeingTracker();
+            tracker.setVisible(true);
+        });
+    }
+}
